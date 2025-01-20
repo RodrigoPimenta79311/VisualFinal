@@ -44,3 +44,27 @@ def inicializar_detector_objetos():
     base_options = python.BaseOptions(model_asset_path=MODEL_PATH)
     object_detector_options = vision.ObjectDetectorOptions(base_options=base_options, score_threshold=0.5)
     return vision.ObjectDetector.create_from_options(object_detector_options)
+
+def visualizar_objetos(image, detection_result):
+    detected_object = None
+    for detection in detection_result.detections:
+        bbox = detection.bounding_box
+        category = detection.categories[0]
+        category_name = category.category_name.lower()
+
+        if category_name in objetos_para_ignorar:
+            continue
+
+        start_point = (int(bbox.origin_x), int(bbox.origin_y))
+        end_point = (int(bbox.origin_x + bbox.width), int(bbox.origin_y + bbox.height))
+        cv2.rectangle(image, start_point, end_point, (255, 0, 0), 3)
+
+        probability = round(category.score, 2)
+        result_text = f"{category_name} ({probability})"
+        text_location = (int(bbox.origin_x), int(bbox.origin_y) - 10)
+        cv2.putText(image, result_text, text_location, cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+
+        if detected_object is None:
+            detected_object = category_name
+
+    return detected_object
