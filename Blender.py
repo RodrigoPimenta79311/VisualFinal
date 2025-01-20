@@ -24,3 +24,46 @@ def servidor_socket():
                         processar_comando(comando)
                 except Exception as e:
                     pass
+def processar_comando(comando):
+    global selected_function, selected_axis
+
+    try:
+        if "|" in comando:
+            acao, valor = comando.split("|", 1)
+        else:
+            acao = comando
+            valor = ""
+
+        if acao == "SelectAxis":
+            if valor in ["X", "Y", "Z", "Todos"]:
+                selected_axis = valor
+
+        elif acao == "ActivateFunction":
+            selected_function = valor
+
+        elif acao == "DeactivateFunction":
+            selected_function = "None"
+
+        elif acao == "Scale":
+            if valor == "Up":
+                alterar_tamanho_objeto(ACTIVE_OBJECT_NAME, fator=1.1)
+            elif valor == "Down":
+                alterar_tamanho_objeto(ACTIVE_OBJECT_NAME, fator=0.9)
+
+        elif acao == "Rotate":
+            if valor == "R":
+                alterar_rotacao_objeto(ACTIVE_OBJECT_NAME, angulo=15)
+            elif valor == "C":
+                alterar_rotacao_objeto(ACTIVE_OBJECT_NAME, angulo=-15)
+
+        elif acao == "AddObject":
+            adicionar_objeto()
+
+        elif acao == "RemoveObject":
+            remover_objeto(ACTIVE_OBJECT_NAME)
+
+        elif acao == "Selecionar":
+            atualizar_objeto_ativo(comando)
+
+    except Exception:
+        pass
