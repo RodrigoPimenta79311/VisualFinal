@@ -67,3 +67,16 @@ def processar_comando(comando):
 
     except Exception:
         pass
+
+def adicionar_objeto():
+    global ACTIVE_OBJECT_NAME
+    bpy.ops.mesh.primitive_cube_add()
+    new_obj = bpy.context.active_object
+    ACTIVE_OBJECT_NAME = new_obj.name
+
+def remover_objeto(obj_name):
+    global ACTIVE_OBJECT_NAME
+    obj = bpy.data.objects.get(obj_name)
+    if obj:
+        bpy.data.objects.remove(obj, do_unlink=True)
+        ACTIVE_OBJECT_NAME = ""
