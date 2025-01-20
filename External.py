@@ -165,3 +165,10 @@ def controlar_funcao_com_mao_esquerda(hand_landmarks, image_height):
     elif funcao_ativa == "Selecionar":
         if mao_fechada:
             enviar_comando_para_blender("Selecionar")
+
+def mostrar_estado(frame):
+    global eixos, indice_atual, funcao_ativa
+    texto_eixo = f"Eixo Atual: {eixos[indice_atual]}"
+    texto_funcao = f"Função Ativa: {funcao_ativa}"
+    cv2.putText(frame, texto_eixo, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+    cv2.putText(frame, texto_funcao, (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
