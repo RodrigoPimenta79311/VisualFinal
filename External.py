@@ -73,3 +73,17 @@ def detectar_objetos(detector, frame):
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
     return detector.detect(mp_image)
+def enviar_comando_para_blender(comando):
+    global ultimo_comando_enviado
+    tempo_atual = time.time()
+
+    if tempo_atual - ultimo_comando_enviado < DELAY_COMANDOS:
+        return
+
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((HOST, PORT))
+            s.sendall(comando.encode('utf-8'))
+        ultimo_comando_enviado = tempo_atual
+    except ConnectionRefusedError:
+        pass
