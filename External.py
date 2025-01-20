@@ -123,3 +123,12 @@ def detectar_mao_aberta(hand_landmarks, image_height):
         for tip_idx, pip_idx in dedos
     )
     return dedos_levantados >= 4
+
+def detectar_mao_fechada(hand_landmarks, image_height):
+    dedos = [(4, 3), (8, 6), (12, 10), (16, 14), (20, 18)]
+    dedos_levantados = sum(
+        hand_landmarks.landmark[tip_idx].y * image_height <
+        hand_landmarks.landmark[pip_idx].y * image_height
+        for tip_idx, pip_idx in dedos
+    )
+    return dedos_levantados <= 1
