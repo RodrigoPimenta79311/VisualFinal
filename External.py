@@ -17,3 +17,7 @@ else:
 
 HOST = "127.0.0.1"
 PORT = 65432
+
+mp_hands = mp.solutions.hands
+mp_face_mesh = mp.solutions.face_mesh
+mp_drawing = mp.solutions.drawing_utils
