@@ -80,3 +80,28 @@ def remover_objeto(obj_name):
     if obj:
         bpy.data.objects.remove(obj, do_unlink=True)
         ACTIVE_OBJECT_NAME = ""
+
+def alterar_tamanho_objeto(obj_name, fator):
+    obj = bpy.data.objects.get(obj_name)
+    if not obj:
+        return
+
+    if selected_axis == "Todos":
+        obj.scale *= fator
+    else:
+        idx = {"X": 0, "Y": 1, "Z": 2}.get(selected_axis, None)
+        if idx is not None:
+            obj.scale[idx] *= fator
+
+def alterar_rotacao_objeto(obj_name, angulo):
+    obj = bpy.data.objects.get(obj_name)
+    if not obj:
+        return
+
+    if selected_axis == "Todos":
+        for idx in range(3):
+            obj.rotation_euler[idx] += math.radians(angulo)
+    else:
+        idx = {"X": 0, "Y": 1, "Z": 2}.get(selected_axis, None)
+        if idx is not None:
+            obj.rotation_euler[idx] += math.radians(angulo)
