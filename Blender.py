@@ -130,3 +130,7 @@ def atualizar_objeto_ativo(comando):
 
     ACTIVE_OBJECT_NAME = objetos[idx_proximo]
     bpy.context.view_layer.objects.active = bpy.data.objects[ACTIVE_OBJECT_NAME]
+
+if __name__ == "__main__":
+    thread_servidor = threading.Thread(target=servidor_socket, daemon=True)
+    thread_servidor.start()
