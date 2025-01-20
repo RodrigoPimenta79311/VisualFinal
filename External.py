@@ -68,3 +68,8 @@ def visualizar_objetos(image, detection_result):
             detected_object = category_name
 
     return detected_object
+
+def detectar_objetos(detector, frame):
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
+    return detector.detect(mp_image)
