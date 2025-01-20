@@ -172,3 +172,13 @@ def mostrar_estado(frame):
     texto_funcao = f"Função Ativa: {funcao_ativa}"
     cv2.putText(frame, texto_eixo, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
     cv2.putText(frame, texto_funcao, (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+def main():
+    base_options = python.BaseOptions(model_asset_path=MODEL_PATH)
+    object_detector_options = vision.ObjectDetectorOptions(
+        base_options=base_options,
+        score_threshold=0.2
+    )
+    detector_objetos = vision.ObjectDetector.create_from_options(object_detector_options)
+
+    cap = cv2.VideoCapture(0)
