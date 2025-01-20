@@ -105,3 +105,28 @@ def alterar_rotacao_objeto(obj_name, angulo):
         idx = {"X": 0, "Y": 1, "Z": 2}.get(selected_axis, None)
         if idx is not None:
             obj.rotation_euler[idx] += math.radians(angulo)
+
+def listar_objetos_na_cena():
+    return [obj.name for obj in bpy.data.objects]
+
+def atualizar_objeto_ativo(comando):
+    global ACTIVE_OBJECT_NAME
+    objetos = listar_objetos_na_cena()
+
+    if not objetos:
+        return
+
+    if ACTIVE_OBJECT_NAME not in objetos:
+        ACTIVE_OBJECT_NAME = objetos[0]
+
+    idx_atual = objetos.index(ACTIVE_OBJECT_NAME)
+
+    if comando == "Selecionar|Up":
+        idx_proximo = (idx_atual + 1) % len(objetos)
+    elif comando == "Selecionar|Down":
+        idx_proximo = (idx_atual - 1) % len(objetos)
+    else:
+        return
+
+    ACTIVE_OBJECT_NAME = objetos[idx_proximo]
+    bpy.context.view_layer.objects.active = bpy.data.objects[ACTIVE_OBJECT_NAME]
