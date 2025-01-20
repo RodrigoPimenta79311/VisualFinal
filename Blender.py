@@ -134,3 +134,7 @@ def atualizar_objeto_ativo(comando):
 if __name__ == "__main__":
     thread_servidor = threading.Thread(target=servidor_socket, daemon=True)
     thread_servidor.start()
+
+ACTIVE_OBJECT_NAME = "Cube"
+selected_function = "None"
+selected_axis = "Todos"
