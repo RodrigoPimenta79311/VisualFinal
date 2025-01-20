@@ -182,3 +182,36 @@ def main():
     detector_objetos = vision.ObjectDetector.create_from_options(object_detector_options)
 
     cap = cv2.VideoCapture(0)
+
+    hands_solution = mp_hands.Hands(
+        max_num_hands=2,
+        min_detection_confidence=0.7,
+        min_tracking_confidence=0.5
+    )
+    face_mesh_solution = mp_face_mesh.FaceMesh(
+        refine_landmarks=True,
+        min_detection_confidence=0.7,
+        min_tracking_confidence=0.5
+    )
+
+    global funcao_ativa
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        image_height, image_width, _ = frame.shape
+
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
+        detection_result = detector_objetos.detect(mp_image)
+        objeto_detectado = visualizar_objetos(frame, detection_result)
+
+        if objeto_detectado:
+            objeto_detectado_normalizado = objeto_detectado.lower()
+            if objeto_detectado_normalizado in objetos_para_funcoes:
+                nova_funcao = objetos_para_funcoes[objeto_detectado_normalizado]
+                if funcao_ativa != nova_funcao:
+                    funcao_ativa = nova_funcao
+                    enviar_comando_para_blender(f"ActivateFunction|{funcao_ativa}")
