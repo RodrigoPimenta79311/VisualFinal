@@ -39,3 +39,8 @@ objetos_para_funcoes = {
 }
 
 objetos_para_ignorar = ["person", "cat", "dog"]
+
+def inicializar_detector_objetos():
+    base_options = python.BaseOptions(model_asset_path=MODEL_PATH)
+    object_detector_options = vision.ObjectDetectorOptions(base_options=base_options, score_threshold=0.5)
+    return vision.ObjectDetector.create_from_options(object_detector_options)
