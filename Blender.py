@@ -7,6 +7,7 @@ HOST = "127.0.0.1"
 PORT = 65432
 
 ACTIVE_OBJECT_NAME = "Cube"
+
 selected_function = "None"
 selected_axis = "Todos"
 
@@ -14,6 +15,7 @@ def servidor_socket():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
         s.listen()
+
         while True:
             conn, addr = s.accept()
             with conn:
@@ -21,9 +23,11 @@ def servidor_socket():
                     data = conn.recv(1024)
                     if data:
                         comando = data.decode('utf-8').strip()
+                        print(f"[Blender] Comando recebido: {comando}")
                         processar_comando(comando)
                 except Exception as e:
-                    pass
+                    print(f"[Blender] Erro ao processar comando: {e}")
+
 def processar_comando(comando):
     global selected_function, selected_axis
 
@@ -37,7 +41,6 @@ def processar_comando(comando):
         if acao == "SelectAxis":
             if valor in ["X", "Y", "Z", "Todos"]:
                 selected_axis = valor
-
         elif acao == "ActivateFunction":
             selected_function = valor
 
@@ -51,10 +54,10 @@ def processar_comando(comando):
                 alterar_tamanho_objeto(ACTIVE_OBJECT_NAME, fator=0.9)
 
         elif acao == "Rotate":
-            if valor == "R":
-                alterar_rotacao_objeto(ACTIVE_OBJECT_NAME, angulo=15)
-            elif valor == "C":
-                alterar_rotacao_objeto(ACTIVE_OBJECT_NAME, angulo=-15)
+            if valor == "Clockwise":
+                rotacionar_objeto(ACTIVE_OBJECT_NAME, sentido=1)
+            elif valor == "CounterClockwise":
+                rotacionar_objeto(ACTIVE_OBJECT_NAME, sentido=-1)
 
         elif acao == "AddObject":
             adicionar_objeto()
@@ -62,11 +65,8 @@ def processar_comando(comando):
         elif acao == "RemoveObject":
             remover_objeto(ACTIVE_OBJECT_NAME)
 
-        elif acao == "Selecionar":
-            atualizar_objeto_ativo(comando)
-
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[Blender] Erro ao processar o comando '{comando}': {e}")
 
 def adicionar_objeto():
     global ACTIVE_OBJECT_NAME
@@ -79,11 +79,14 @@ def remover_objeto(obj_name):
     obj = bpy.data.objects.get(obj_name)
     if obj:
         bpy.data.objects.remove(obj, do_unlink=True)
-        ACTIVE_OBJECT_NAME = ""
+        ACTIVE_OBJECT_NAME = ""  # Não há objeto ativo agora
+    
 
 def alterar_tamanho_objeto(obj_name, fator):
+ 
     obj = bpy.data.objects.get(obj_name)
     if not obj:
+       
         return
 
     if selected_axis == "Todos":
@@ -93,53 +96,27 @@ def alterar_tamanho_objeto(obj_name, fator):
         if idx is not None:
             obj.scale[idx] *= fator
 
-def alterar_rotacao_objeto(obj_name, angulo):
+def rotacionar_objeto(obj_name, sentido):
+
     obj = bpy.data.objects.get(obj_name)
     if not obj:
+      
         return
+    graus_por_passo = 15
+    valor_rotacao = math.radians(graus_por_passo) * sentido
 
     if selected_axis == "Todos":
-        for idx in range(3):
-            obj.rotation_euler[idx] += math.radians(angulo)
+        obj.rotation_euler = [
+            angle + valor_rotacao for angle in obj.rotation_euler
+        ]
     else:
         idx = {"X": 0, "Y": 1, "Z": 2}.get(selected_axis, None)
         if idx is not None:
-            obj.rotation_euler[idx] += math.radians(angulo)
+            obj.rotation_euler[idx] += valor_rotacao
 
-def listar_objetos_na_cena():
-    return [obj.name for obj in bpy.data.objects]
-
-def atualizar_objeto_ativo(comando):
-    global ACTIVE_OBJECT_NAME
-    objetos = listar_objetos_na_cena()
-
-    if not objetos:
-        return
-
-    if ACTIVE_OBJECT_NAME not in objetos:
-        ACTIVE_OBJECT_NAME = objetos[0]
-
-    idx_atual = objetos.index(ACTIVE_OBJECT_NAME)
-
-    if comando == "Selecionar|Up":
-        idx_proximo = (idx_atual + 1) % len(objetos)
-    elif comando == "Selecionar|Down":
-        idx_proximo = (idx_atual - 1) % len(objetos)
-    else:
-        return
-
-    ACTIVE_OBJECT_NAME = objetos[idx_proximo]
-    bpy.context.view_layer.objects.active = bpy.data.objects[ACTIVE_OBJECT_NAME]
+    print(f"[Blender] Objeto '{obj_name}' rotacionado em {selected_axis} (valor={math.degrees(valor_rotacao)}°).")
 
 if __name__ == "__main__":
     thread_servidor = threading.Thread(target=servidor_socket, daemon=True)
     thread_servidor.start()
-
-ACTIVE_OBJECT_NAME = "Cube"
-selected_function = "None"
-selected_axis = "Todos"
-
-try:
-    # Operações principais
-except Exception as e:
-    pass
+    print("[Blender] Servidor iniciado.")
