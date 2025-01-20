@@ -87,3 +87,30 @@ def enviar_comando_para_blender(comando):
         ultimo_comando_enviado = tempo_atual
     except ConnectionRefusedError:
         pass
+
+def detectar_movimento_cabeca(landmarks, image_width):
+    global indice_atual, eixos, ultimo_movimento_array
+    tempo_atual = time.time()
+
+    if tempo_atual - ultimo_movimento_array < DELAY_COMANDOS:
+        return None
+
+    nariz = landmarks[1]
+    bochecha_esquerda = landmarks[127]
+    bochecha_direita = landmarks[356]
+
+    pos_nariz_x = nariz.x * image_width
+    pos_bochecha_esquerda_x = bochecha_esquerda.x * image_width
+    pos_bochecha_direita_x = bochecha_direita.x * image_width
+
+    if pos_nariz_x > pos_bochecha_direita_x - 10:
+        indice_atual = (indice_atual - 1) % len(eixos)
+        ultimo_movimento_array = tempo_atual
+        return f"SelectAxis|{eixos[indice_atual]}"
+
+    elif pos_nariz_x < pos_bochecha_esquerda_x + 10:
+        indice_atual = (indice_atual + 1) % len(eixos)
+        ultimo_movimento_array = tempo_atual
+        return f"SelectAxis|{eixos[indice_atual]}"
+
+    return None
