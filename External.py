@@ -21,3 +21,21 @@ PORT = 65432
 mp_hands = mp.solutions.hands
 mp_face_mesh = mp.solutions.face_mesh
 mp_drawing = mp.solutions.drawing_utils
+
+DELAY_COMANDOS = 0.5
+ultimo_comando_enviado = 0
+ultimo_movimento_array = 0
+
+eixos = ["Todos", "X", "Y", "Z"]
+indice_atual = 0
+funcao_ativa = "None"
+
+objetos_para_funcoes = {
+    "hammer": "Adicionar",
+    "toothbrush": "Remover",
+    "bowl": "Escalar",
+    "ball": "Rotate",
+    "corno": "Selecionar"
+}
+
+objetos_para_ignorar = ["person", "cat", "dog"]
