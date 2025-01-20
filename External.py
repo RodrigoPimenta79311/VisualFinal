@@ -132,3 +132,36 @@ def detectar_mao_fechada(hand_landmarks, image_height):
         for tip_idx, pip_idx in dedos
     )
     return dedos_levantados <= 1
+
+def controlar_funcao_com_mao_esquerda(hand_landmarks, image_height):
+    global funcao_ativa
+
+    if funcao_ativa == "None":
+        return
+
+    mao_aberta = detectar_mao_aberta(hand_landmarks, image_height)
+    mao_fechada = detectar_mao_fechada(hand_landmarks, image_height)
+
+    if funcao_ativa == "Rotate":
+        if mao_aberta:
+            enviar_comando_para_blender("Rotate|R")
+        elif mao_fechada:
+            enviar_comando_para_blender("Rotate|C")
+
+    elif funcao_ativa == "Adicionar":
+        if mao_aberta:
+            enviar_comando_para_blender("AddObject")
+
+    elif funcao_ativa == "Remover":
+        if mao_fechada:
+            enviar_comando_para_blender("RemoveObject")
+
+    elif funcao_ativa == "Escalar":
+        if mao_aberta:
+            enviar_comando_para_blender("Scale|Up")
+        elif mao_fechada:
+            enviar_comando_para_blender("Scale|Down")
+
+    elif funcao_ativa == "Selecionar":
+        if mao_fechada:
+            enviar_comando_para_blender("Selecionar")
