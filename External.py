@@ -215,3 +215,13 @@ def main():
                 if funcao_ativa != nova_funcao:
                     funcao_ativa = nova_funcao
                     enviar_comando_para_blender(f"ActivateFunction|{funcao_ativa}")
+
+        cv2.imshow("Demo", frame)
+        if cv2.waitKey(1) & 0xFF == 27:
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
