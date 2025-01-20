@@ -138,3 +138,8 @@ if __name__ == "__main__":
 ACTIVE_OBJECT_NAME = "Cube"
 selected_function = "None"
 selected_axis = "Todos"
+
+try:
+    # Operações principais
+except Exception as e:
+    pass
